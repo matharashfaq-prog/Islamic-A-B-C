@@ -1,0 +1,96 @@
+                    <!-- NEW FEATURE: ADJUSTABLE KHATAI WEIGHT -->
+                    <div class="mb-4 bg-amber-50 p-3 rounded-xl border border-amber-200">
+                        <label class="block text-sm font-bold text-amber-900 mb-1">تیار خطائی کا وزن (گرام):</label>
+                        <input type="number" id="khataiWeightInput" value="15" oninput="manualCalculate()" class="w-full p-2 border border-amber-300 rounded-lg bg-white font-bold text-center text-amber-700">
+                        <p class="text-[11px] text-amber-800 mt-1">ایک ڈبے کا کل وزن خودکار طریقے سے (وزن × 24 دانے) ایڈجسٹ ہو جائے گا۔</p>
+                                    <th class="p-2">ایک باکس کا کل وزن</th>
+                                    <th class="p-2 rounded-l-lg">کل فائنل کارٹن</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b">
+                                    <td class="p-3 font-bold">آپ کے بجٹ میں پیداوار:</td>
+                                    <td id="tableRawWeight" class="p-3">0 کلو</td>
+                                    <td id="tableTotalBoxes" class="p-3">0 ڈبے</td>
+                                    <td id="tableBoxNetWeight" class="p-3 text-amber-700 font-bold">0 گرام</td>
+                        <label class="block text-xs font-bold mb-1">وصول شدہ رقم:</label>
+                <h2 class="text-xl font-bold text-amber-700 mb-4 border-b pb-2">بزنس رپورٹس اور منافع کا موازنع</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-emerald-600 text-white p-4 rounded-xl">
+                        <p class="text-sm opacity-80">کل سیلز (آل ٹائم)</p>
+                        <p id="repTotalSales" class="text-2xl font-bold">0 روپے</p>
+                    </div>
+                    <div class="bg-blue-600 text-white p-4 rounded-xl">
+                        <p class="text-sm opacity-80">مارکیٹ میں کل ادھار</p>
+        // Feature 2: Core Calculations with Dynamic Weight, Baking Loss & Crumb Wastage
+        function manualCalculate() {
+            let budget = parseFloat(document.getElementById('budgetInput').value) || 0;
+            let singleKhataiWeight = parseFloat(document.getElementById('khataiWeightInput').value) || 15;
+            
+            let rGhee = parseFloat(document.getElementById('rateGhee').value) || 0;
+            let rSugar = parseFloat(document.getElementById('rateSugar').value) || 0;
+            let rFlour = parseFloat(document.getElementById('rateFlour').value) || 0;
+            let rSuji = parseFloat(document.getElementById('rateSuji').value) || 0;
+            let rBP = parseFloat(document.getElementById('rateBP').value) || 0;
+
+            // 1 KG Raw formulation cost
+            let rawMaterialCostPerKG = (rGhee * 0.3) + (rSugar * 0.3) + (rFlour * 0.3) + (rSuji * 0.1) + (rBP * (BP_PER_BATCH_G/1000));
+            let totalFactoryCostPerKG = rawMaterialCostPerKG + LABOUR_FIXED + GAS_FIXED;
+
+            // Baking effect (8% moisture loss + 5% breakages = 13% total drop)
+            let finalYieldMultiplier = 0.87; 
+            let totalRawKGCanBuy = budget / totalFactoryCostPerKG;
+            let readyKhataiGrams = (totalRawKGCanBuy * 1000) * finalYieldMultiplier;
+            
+            let totalGoodKhatais = readyKhataiGrams / singleKhataiWeight;
+            let totalBoxes = totalGoodKhatais / 24;
+            let singleBoxWeight = singleKhataiWeight * 24;
+            
+            // Tier based Carton discount check
+            let wholesalepriceBox = (budget >= 10000) ? 190 : 200; 
+
+            // Dynamic Costs per entities
+            let singleCost = totalFactoryCostPerKG / (1000 * finalYieldMultiplier / singleKhataiWeight);
+            let boxCost = (singleCost * 24) + BOX_PACKING_COST;
+            let boxCostWithCommission = boxCost + RIDER_COMMISSION;
+            let cartonCost = boxCostWithCommission * 24;
+            let cartonProfit = (wholesalepriceBox - boxCostWithCommission) * 24;
+
+            // Update UI Outputs
+            document.getElementById('resSingleCost').innerText = singleCost.toFixed(2) + " روپے";
+            document.getElementById('resBoxCost').innerText = boxCostWithCommission.toFixed(2) + " روپے";
+            document.getElementById('resCartonCost').innerText = cartonCost.toFixed(2) + " روپے";
+            document.getElementById('resCartonProfit').innerText = cartonProfit.toFixed(2) + " روپے";
+
+            document.getElementById('tableRawWeight').innerText = totalRawKGCanBuy.toFixed(2) + " کلو گرام";
+            document.getElementById('tableTotalBoxes').innerText = Math.floor(totalBoxes) + " ڈبے";
+            document.getElementById('tableBoxNetWeight').innerText = singleBoxWeight + " گرام";
+                profitChart.data.datasets[0].data = [totalProfit * 0.2, totalProfit * 0.5, totalProfit, totalProfit * 4.5];
+                profitChart.update();
+            }
+        }
+
+        function initChart() {
+            let ctx = document.getElementById('profitChart').getContext('2d');
+            profitChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['روزانہ', 'ہفتہ وار', 'ماہانہ', 'سالانہ (تخمینہ)'],
+                    datasets: [{
+                        label: 'خالص منافع کا گراف (روپے)',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: '#d97706',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+            updateReports();
+        }
+    </script>
+</body>
+</html>
