@@ -1,96 +1,176 @@
-                    <!-- NEW FEATURE: ADJUSTABLE KHATAI WEIGHT -->
-                    <div class="mb-4 bg-amber-50 p-3 rounded-xl border border-amber-200">
-                        <label class="block text-sm font-bold text-amber-900 mb-1">تیار خطائی کا وزن (گرام):</label>
-                        <input type="number" id="khataiWeightInput" value="15" oninput="manualCalculate()" class="w-full p-2 border border-amber-300 rounded-lg bg-white font-bold text-center text-amber-700">
-                        <p class="text-[11px] text-amber-800 mt-1">ایک ڈبے کا کل وزن خودکار طریقے سے (وزن × 24 دانے) ایڈجسٹ ہو جائے گا۔</p>
-                                    <th class="p-2">ایک باکس کا کل وزن</th>
-                                    <th class="p-2 rounded-l-lg">کل فائنل کارٹن</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="border-b">
-                                    <td class="p-3 font-bold">آپ کے بجٹ میں پیداوار:</td>
-                                    <td id="tableRawWeight" class="p-3">0 کلو</td>
-                                    <td id="tableTotalBoxes" class="p-3">0 ڈبے</td>
-                                    <td id="tableBoxNetWeight" class="p-3 text-amber-700 font-bold">0 گرام</td>
-                        <label class="block text-xs font-bold mb-1">وصول شدہ رقم:</label>
-                <h2 class="text-xl font-bold text-amber-700 mb-4 border-b pb-2">بزنس رپورٹس اور منافع کا موازنع</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div class="bg-emerald-600 text-white p-4 rounded-xl">
-                        <p class="text-sm opacity-80">کل سیلز (آل ٹائم)</p>
-                        <p id="repTotalSales" class="text-2xl font-bold">0 روپے</p>
-                    </div>
-                    <div class="bg-blue-600 text-white p-4 rounded-xl">
-                        <p class="text-sm opacity-80">مارکیٹ میں کل ادھار</p>
-        // Feature 2: Core Calculations with Dynamic Weight, Baking Loss & Crumb Wastage
-        function manualCalculate() {
-            let budget = parseFloat(document.getElementById('budgetInput').value) || 0;
-            let singleKhataiWeight = parseFloat(document.getElementById('khataiWeightInput').value) || 15;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Islamic A-Z Learning with Voice</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        #app-container {
+            text-align: center;
+            padding: 20px;
+            max-width: 800px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        #letter {
+            font-size: 10rem;
+            font-weight: bold;
+            margin: 0;
+            color: #FF5722;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        #word {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #2E7D32;
+        }
+
+        #meaning {
+            font-size: 1.8rem;
+            color: #555555;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        .hint {
+            position: absolute;
+            bottom: 30px;
+            font-size: 1.2rem;
+            color: #aaaaaa;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Sound Icon Indicator */
+        .sound-icon {
+            font-size: 2rem;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 0.9; }
+            100% { opacity: 0.4; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <h1 id="letter">A</h1>
+        <h2 id="word">Allah</h2>
+        <p id="meaning">The One and Only God, the Creator of everything.</p>
+        <div class="sound-icon">🔊</div>
+    </div>
+
+    <div class="hint">Tap anywhere to hear and see the next letter! ✨</div>
+
+    <script>
+        const alphabetData = [
+            { letter: "A", word: "Allah", meaning: "The One and Only God, the Creator of everything.", color: "#FF5722" },
+            { letter: "B", word: "Bismillah", meaning: "meaning 'In the name of Allah' — what we say before we start anything!", color: "#E91E63" },
+            { letter: "C", word: "Charity", meaning: "Giving to those in need and sharing what we have.", color: "#9C27B0" },
+            { letter: "D", word: "Dua", meaning: "Talking to Allah and asking Him for blessings and help.", color: "#3F51B5" },
+            { letter: "E", word: "Eman", meaning: "Having strong faith and believing in Allah in our hearts.", color: "#00BCD4" },
+            { letter: "F", word: "Fard", meaning: "The important duties Allah asked us to do, like praying.", color: "#4CAF50" },
+            { letter: "G", word: "Ghafoor", meaning: "Allah is The All-Forgiving, always ready to forgive us.", color: "#8BC34A" },
+            { letter: "H", word: "Hajj", meaning: "The beautiful journey to the Holy Kaaba in Makkah.", color: "#FFC107" },
+            { letter: "I", word: "Ihsan", meaning: "Doing our very best and doing good actions beautifully.", color: "#FF9800" },
+            { letter: "J", word: "Jannah", meaning: "Paradise! The beautiful home of peace and rewards.", color: "#009688" },
+            { letter: "K", word: "Kaaba", meaning: "The sacred house of Allah that Muslims face when they pray.", color: "#607D8B" },
+            { letter: "L", word: "La ilaha illallah", meaning: "The beautiful declaration: There is no God except Allah.", color: "#795548" },
+            { letter: "M", word: "Muhammad", meaning: "The final Messenger of Allah, who taught us kindness.", color: "#2196F3" },
+            { letter: "N", word: "Niyyah", meaning: "The clean and good intention we make in our hearts.", color: "#9E9E9E" },
+            { letter: "O", word: "Oasis of Peace", meaning: "Like the city of Madinah, full of love and safety.", color: "#E040FB" },
+            { letter: "P", word: "Prophets", meaning: "The special guides sent by Allah to teach humanity.", color: "#00E676" },
+            { letter: "Q", word: "Quran", meaning: "The holy book and literal words of Allah to guide us.", color: "#00B0FF" },
+            { letter: "R", word: "Ramadan", meaning: "The blessed month of fasting, sharing, and reading Quran.", color: "#FF3D00" },
+            { letter: "S", word: "Sadaqah", meaning: "A voluntary kindness or charity—even a smile is Sadaqah!", color: "#4D7300" },
+            { letter: "T", word: "Taqwa", meaning: "Remembering Allah in everything we do and staying good.", color: "#651FFF" },
+            { letter: "U", word: "Ummah", meaning: "The big, global family of Muslims all around the world.", color: "#00838F" },
+            { letter: "V", word: "Virtue", meaning: "Having excellent manners, honesty, and treating others well.", color: "#C2185B" },
+            { letter: "W", word: "Wudu", meaning: "Washing up with clean water to prepare beautifully for prayer.", color: "#1976D2" },
+            { letter: "X", word: "Excellence", meaning: "Always doing our work and duties with high quality.", color: "#F57C00" },
+            { letter: "Y", word: "Yaqeen", meaning: "Being 100% sure and trusting in Allah's beautiful plans.", color: "#388E3C" },
+            { letter: "Z", word: "Zikr", meaning: "Remembering Allah by saying 'Alhamdulillah' and 'SubhanAllah'.", color: "#D32F2F" }
+        ];
+
+        let currentIndex = 0;
+
+        const container = document.getElementById('app-container');
+        const letterEl = document.getElementById('letter');
+        const wordEl = document.getElementById('word');
+        const meaningEl = document.getElementById('meaning');
+
+        // Core Text-to-Speech Function
+        function speakText(textToSay) {
+            // Cancel any speech currently playing so it doesn't overlap
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(textToSay);
             
-            let rGhee = parseFloat(document.getElementById('rateGhee').value) || 0;
-            let rSugar = parseFloat(document.getElementById('rateSugar').value) || 0;
-            let rFlour = parseFloat(document.getElementById('rateFlour').value) || 0;
-            let rSuji = parseFloat(document.getElementById('rateSuji').value) || 0;
-            let rBP = parseFloat(document.getElementById('rateBP').value) || 0;
+            // Kid-friendly speech settings
+            utterance.rate = 0.85;  // Slightly slower so kids can understand clearly
+            utterance.pitch = 1.15; // Slightly higher pitch to make it sound cheerful
 
-            // 1 KG Raw formulation cost
-            let rawMaterialCostPerKG = (rGhee * 0.3) + (rSugar * 0.3) + (rFlour * 0.3) + (rSuji * 0.1) + (rBP * (BP_PER_BATCH_G/1000));
-            let totalFactoryCostPerKG = rawMaterialCostPerKG + LABOUR_FIXED + GAS_FIXED;
+            window.speechSynthesis.speak(utterance);
+        }
 
-            // Baking effect (8% moisture loss + 5% breakages = 13% total drop)
-            let finalYieldMultiplier = 0.87; 
-            let totalRawKGCanBuy = budget / totalFactoryCostPerKG;
-            let readyKhataiGrams = (totalRawKGCanBuy * 1000) * finalYieldMultiplier;
-            
-            let totalGoodKhatais = readyKhataiGrams / singleKhataiWeight;
-            let totalBoxes = totalGoodKhatais / 24;
-            let singleBoxWeight = singleKhataiWeight * 24;
-            
-            // Tier based Carton discount check
-            let wholesalepriceBox = (budget >= 10000) ? 190 : 200; 
+        function handleScreenTransition() {
+            const currentItem = alphabetData[currentIndex];
 
-            // Dynamic Costs per entities
-            let singleCost = totalFactoryCostPerKG / (1000 * finalYieldMultiplier / singleKhataiWeight);
-            let boxCost = (singleCost * 24) + BOX_PACKING_COST;
-            let boxCostWithCommission = boxCost + RIDER_COMMISSION;
-            let cartonCost = boxCostWithCommission * 24;
-            let cartonProfit = (wholesalepriceBox - boxCostWithCommission) * 24;
+            // 1. Update text displays
+            letterEl.textContent = currentItem.letter;
+            wordEl.textContent = currentItem.word;
+            meaningEl.textContent = currentItem.meaning;
+            letterEl.style.color = currentItem.color;
 
-            // Update UI Outputs
-            document.getElementById('resSingleCost').innerText = singleCost.toFixed(2) + " روپے";
-            document.getElementById('resBoxCost').innerText = boxCostWithCommission.toFixed(2) + " روپے";
-            document.getElementById('resCartonCost').innerText = cartonCost.toFixed(2) + " روپے";
-            document.getElementById('resCartonProfit').innerText = cartonProfit.toFixed(2) + " روپے";
+            // 2. Refresh CSS entry animation
+            container.style.animation = 'none';
+            container.offsetHeight; 
+            container.style.animation = 'fadeIn 0.4s ease-in-out';
 
-            document.getElementById('tableRawWeight').innerText = totalRawKGCanBuy.toFixed(2) + " کلو گرام";
-            document.getElementById('tableTotalBoxes').innerText = Math.floor(totalBoxes) + " ڈبے";
-            document.getElementById('tableBoxNetWeight').innerText = singleBoxWeight + " گرام";
-                profitChart.data.datasets[0].data = [totalProfit * 0.2, totalProfit * 0.5, totalProfit, totalProfit * 4.5];
-                profitChart.update();
+            // 3. Trigger voice: Speaks "A... Allah"
+            const phraseToSpeak = `${currentItem.letter}.... ${currentItem.word}`;
+            speakText(phraseToSpeak);
+        }
+
+        // Initialize voice for the very first screen (Requires a user gesture on some modern browsers)
+        document.body.addEventListener('click', () => {
+            // Check if it's the initial tap or a step forward
+            if (container.dataset.started === "true") {
+                currentIndex = (currentIndex + 1) % alphabetData.length;
+            } else {
+                container.dataset.started = "true";
             }
-        }
-
-        function initChart() {
-            let ctx = document.getElementById('profitChart').getContext('2d');
-            profitChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['روزانہ', 'ہفتہ وار', 'ماہانہ', 'سالانہ (تخمینہ)'],
-                    datasets: [{
-                        label: 'خالص منافع کا گراف (روپے)',
-                        data: [0, 0, 0, 0],
-                        backgroundColor: '#d97706',
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
-            updateReports();
-        }
+            handleScreenTransition();
+        });
     </script>
 </body>
 </html>
